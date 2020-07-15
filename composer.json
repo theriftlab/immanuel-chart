@@ -1,0 +1,30 @@
+{
+    "name": "sunlight/immanuel-chart",
+    "description": "Lumen package - bridge to a Python astrology script powered by Flatlib.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robert Davies",
+            "email": "rob@sunlightdigital.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Sunlight\\ImmanuelChart\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sunlight\\ImmanuelChart\\Tests\\": "tests"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "unicorn/lumen-testbench": "dev-master",
+        "unicorn/lumen-testing": "dev-master",
+        "dms/phpunit-arraysubset-asserts": "^0.2.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
