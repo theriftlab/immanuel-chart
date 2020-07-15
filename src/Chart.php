@@ -31,6 +31,30 @@ class Chart
     }
 
     /**
+     * Basic getter for options.
+     *
+     */
+    public function __get($key)
+    {
+        if (isset($this->options[$key])) {
+            return $this->options[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * Basic setter for options.
+     *
+     */
+    public function __set($key, $value) : void
+    {
+        if (isset($this->options[$key])) {
+            $this->options[$key] = $value;
+        }
+    }
+
+    /**
      * Return a natal chart.
      *
      */
