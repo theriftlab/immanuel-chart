@@ -2,6 +2,7 @@
 
 namespace Sunlight\ImmanuelChart;
 
+use Sunlight\ImmanuelChart\Facades\ChartValidator;
 use Symfony\Component\Process\Process;
 
 class Chart
@@ -52,6 +53,15 @@ class Chart
         if (isset($this->options[$key])) {
             $this->options[$key] = $value;
         }
+    }
+
+    /**
+     * Validation courtesy of the ChartValidator class.
+     *
+     */
+    public function validate(array $inputs, ...$ruleTypes)
+    {
+        return ChartValidator::validate($inputs, ...$ruleTypes);
     }
 
     /**
