@@ -28,6 +28,12 @@ class ChartValidationTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
+    public function testValidateExtraArrayPasses()
+    {
+        $validator = Chart::validate($this->chartDetails + ['solar_return_year' => $this->solarReturnYear], ['chart', 'solar']);
+        $this->assertTrue($validator->passes());
+    }
+
     public function testValidateExtraOnlyPasses()
     {
         $validator = Chart::validate(['solar_return_year' => $this->solarReturnYear], 'solar');

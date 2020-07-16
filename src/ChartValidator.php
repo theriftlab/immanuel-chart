@@ -61,7 +61,7 @@ class ChartValidator
      */
     public function validate(array $inputs, ...$ruleTypes) : \Illuminate\Validation\Validator
     {
-        $ruleTypes = $ruleTypes ?? ['chart'];
+        $ruleTypes = !empty($ruleTypes) ? Arr::flatten($ruleTypes) : ['chart'];
         $rules = Arr::collapse(Arr::only($this->rules, $ruleTypes));
         return Validator::make($inputs, $rules);
     }
