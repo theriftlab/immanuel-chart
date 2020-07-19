@@ -2,6 +2,7 @@
 
 namespace Sunlight\ImmanuelChart;
 
+use Illuminate\Support\Facades\Cache;
 use Sunlight\ImmanuelChart\Facades\ChartValidator;
 use Symfony\Component\Process\Process;
 
@@ -89,6 +90,19 @@ class Chart
         return $this->getChartData($scriptArgs);
     }
 
+    /*
+     * Retreive cached chart data here, or generate if not cached.
+     *
+     */
+    protected function getChartData(array $scriptArgs)
+    {
+        $key = hash('sha256', json_encode($scriptArgs));
+
+        return Cache::rememberForever($key, function () use ($scriptArgs) {
+            return $this->generateChartData($scriptArgs);
+        });
+    }
+
     /**
      * Generate the requested chart here.
      * Currently this uses the chart.py script, but could potentially aggregate
@@ -96,7 +110,7 @@ class Chart
      * chart.py will not perform its own validation.
      *
      */
-    protected function getChartData(array $scriptArgs)
+    protected function generateChartData(array $scriptArgs)
     {
         // Assemble command-line arguments
         $cmdScriptArgs = [];
