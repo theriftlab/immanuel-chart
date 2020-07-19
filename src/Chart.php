@@ -96,7 +96,7 @@ class Chart
      */
     protected function getChartData(array $scriptArgs)
     {
-        $key = hash('sha256', json_encode($scriptArgs));
+        $key = base64_encode(implode($scriptArgs));
 
         return Cache::rememberForever($key, function () use ($scriptArgs) {
             return $this->generateChartData($scriptArgs);
