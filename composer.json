@@ -19,7 +19,9 @@
             "Sunlight\\ImmanuelChart\\Tests\\": "tests"
         }
     },
-    "require": {},
+    "require": {
+        "php": "^7.4"
+    },
     "require-dev": {
         "unicorn/lumen-testbench": "dev-master",
         "unicorn/lumen-testing": "dev-master",
