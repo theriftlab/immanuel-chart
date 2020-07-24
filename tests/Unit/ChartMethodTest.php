@@ -73,4 +73,26 @@ class ChartMethodTest extends TestCase
             ],
         ], $solarChartData);
     }
+
+    /**
+     * Test getProgressedChart() data.
+     *
+     * @return void
+     */
+    public function testProgressedChartData()
+    {
+        $progressedChartData = Chart::create($this->chartDetails)->getProgressedChart($this->progressionDate);
+        $this->assertArraySubset([
+            'planets' => [
+                'sun' => [
+                    'planet' => 'Sun',
+                    'sign' => 'Scorpio',
+                ],
+                'moon' => [
+                    'planet' => 'Moon',
+                    'sign' => 'Virgo',
+                ],
+            ],
+        ], $progressedChartData);
+    }
 }

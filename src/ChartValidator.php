@@ -52,6 +52,9 @@ class ChartValidator
             'solar' => [
                 'solar_return_year' => ['required', 'regex:/[0-9]{4}/'],
             ],
+            'progressed' => [
+                'progression_date' => ['required', 'date_format:Y-m-d'],
+            ]
         ];
     }
 

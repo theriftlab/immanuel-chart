@@ -17,4 +17,6 @@ class TestCase extends \Lumen\Testbench\TestCase
     ];
 
     protected $solarReturnYear = 2025;
+
+    protected $progressionDate = '2020-07-01';
 }

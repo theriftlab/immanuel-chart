@@ -90,6 +90,19 @@ class Chart
         return $this->getChartData($scriptArgs);
     }
 
+    /**
+     * Return a progressed chart.
+     *
+     */
+    public function getProgressedChart($date = null)
+    {
+        $scriptArgs = $this->options + [
+            'type' => 'progressed',
+            'progression_date' => $date ?? date('Y-m-d'),
+        ];
+        return $this->getChartData($scriptArgs);
+    }
+
     /*
      * Retreive cached chart data here, or generate if not cached.
      *

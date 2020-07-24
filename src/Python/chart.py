@@ -1,9 +1,8 @@
-import re
-import sys
-import json
+import re, sys, json
 
 from collections import defaultdict
-from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from datetime import datetime, date
 from pytz import timezone, utc
 from timezonefinder import TimezoneFinder
 from backports.datetime_fromisoformat import MonkeyPatch
@@ -16,18 +15,55 @@ from flatlib.chart import Chart
 from flatlib.datetime import Datetime
 from flatlib.geopos import GeoPos
 
-# get command-line args
+# calculate a progression chart date
+def progression_chart_date():
+    progression_date_dt = tz.localize(datetime.fromisoformat(progression_date));
+    last_birthday_dt = birth_dt_local.replace(year=progression_date_dt.year)
+
+    # the progression year is counted from birthday to birthday
+    # this calculates how far along in the year the progression date is
+    if (last_birthday_dt > progression_date_dt):
+        next_birthday_dt = last_birthday_dt
+        last_birthday_dt -= relativedelta(years=1)
+    else:
+        next_birthday_dt = last_birthday_dt + relativedelta(years=1)
+
+    year_length = (next_birthday_dt - last_birthday_dt).days * 24
+    days_passed = (progression_date_dt - last_birthday_dt).days * 24
+    days_passed += relativedelta(progression_date_dt, last_birthday_dt).hours
+    days_passed_ratio = days_passed / year_length
+
+    # calculate progression chart date / time
+    days = relativedelta(progression_date_dt, birth_dt_local).years
+    hours = days_passed_ratio * 24
+    return (birth_dt + relativedelta(days=days, hours=hours))
+
+# convert a decimal angle into an array of degrees, minutes and seconds
+def format_angle(decimal_angle):
+    angle_parts = angle.toString(decimal_angle)[1:].split(':')
+    return {
+        'degrees': angle_parts[0],
+        'minutes': angle_parts[1],
+        'seconds': angle_parts[2]
+    }
+
+# get command-line args & check we have all the ones we want
 args = defaultdict(list)
 
 for k, v in ((k.lstrip('-'), v) for k,v in (a.split('=') for a in sys.argv[1:])):
     args[k] = v
 
-# check we have all the ones we want
 required_args = set(('type', 'latitude', 'longitude', 'birth_date', 'birth_time', 'house_system'))
 
-if ('type' in args and args['type'] == 'solar'):
-    required_args.add('solar_return_year')
+if ('type' in args):
+    # year is required for solar returns
+    if (args['type'] == 'solar'):
+        required_args.add('solar_return_year')
+    # date is required for progressed chart
+    elif (args['type'] == 'progressed'):
+        required_args.add('progression_date')
 
+# ensure they all exist
 if not required_args <= args.keys():
     sys.exit(json.dumps({'error': 'Missing arguments'}));
 
@@ -39,37 +75,45 @@ birth_date = args['birth_date']
 birth_time = args['birth_time']
 house_system = args['house_system']
 solar_return_year = args['solar_return_year'] if 'solar_return_year' in args else 0;
+progression_date = args['progression_date'] if 'progression_date' in args else 0;
 
-# quick function to get a timezone offset based on location
-def get_offset():
-    tf = TimezoneFinder()
-    target_date = datetime.fromisoformat(birth_date + ' ' + birth_time)
-    tz_target = timezone(tf.certain_timezone_at(lng=longitude, lat=latitude))
-    date_target = tz_target.localize(target_date)
-    date_utc = utc.localize(target_date)
-    return int((date_utc - date_target).total_seconds() / 3600)
-
-# function to convert a decimal angle into an array of degrees, minutes and seconds
-def format_angle(decimal_angle):
-    angle_parts = angle.toString(decimal_angle)[1:].split(':')
-    return {
-        'degrees': angle_parts[0],
-        'minutes': angle_parts[1],
-        'seconds': angle_parts[2]
-    }
-
-# convert command-line args into data for Chart
-timezone_offset=get_offset()
-chart_date = Datetime([int(i) for i in birth_date.split('-')], birth_time, timezone_offset)
+# set up date localisation
+tf = TimezoneFinder()
+tz = timezone(tf.certain_timezone_at(lng=longitude, lat=latitude))
+# calculate timezone offset
+birth_dt = datetime.fromisoformat(birth_date + ' ' + birth_time)
+birth_dt_local = tz.localize(birth_dt)
+birth_dt_utc = utc.localize(birth_dt)
+timezone_offset = int((birth_dt_utc - birth_dt_local).total_seconds() / 3600)
+# get a location
 chart_pos = GeoPos(latitude, longitude)
 
-# produce natal chart, and if we've been given a solar return year, work with a return chart
-natal_chart = Chart(chart_date, chart_pos, hsys=house_system, IDs=LIST_OBJECTS)
-chart = natal_chart.solarReturn(solar_return_year) if chart_type == 'solar' else natal_chart
+# generate the chart based on --type arg
+if (chart_type == 'progressed'):
+    # use progressed date for main chart
+    pcd = progression_chart_date()
+    chart_date = Datetime([pcd.year, pcd.month, pcd.day], ['+', pcd.hour, pcd.minute, pcd.second], timezone_offset)
+else:
+    # use passed birth date & time for main chart
+    chart_date = Datetime([int(i) for i in birth_date.split('-')], birth_time, timezone_offset)
 
-# output chart data as JSON
+# produce the main chart
+main_chart = Chart(chart_date, chart_pos, hsys=house_system, IDs=LIST_OBJECTS)
+# if we've been given a solar return year, Flatlib needs the natal chart to produce a solar return
+chart = main_chart.solarReturn(solar_return_year) if chart_type == 'solar' else main_chart
+
+# format chart date into PHP/SOAP-friendly format
+offset = chart_date.utcoffset.toList()
+soap_chart_date = '-'.join(str(i) for i in chart_date.date.toList()[1:])
+soap_chart_date += 'T'
+soap_chart_date += ':'.join(str(i) for i in chart_date.time.toList()[1:])
+soap_chart_date += str(offset[0]) + str(offset[1]).zfill(2) + ':' + str(offset[2]).zfill(2)
+
+# collate data into JSON object
 data = {
+    'chartDate': soap_chart_date,
     'diurnal': chart.isDiurnal(),
+    'nocturnal': not chart.isDiurnal(),
     'moonPhase': chart.getMoonPhase(),
     'planets': {},
     'points': {},

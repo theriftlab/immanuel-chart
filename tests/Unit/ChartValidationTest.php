@@ -30,7 +30,7 @@ class ChartValidationTest extends TestCase
 
     public function testValidateExtraArrayPasses()
     {
-        $validator = Chart::validate($this->chartDetails + ['solar_return_year' => $this->solarReturnYear], ['chart', 'solar']);
+        $validator = Chart::validate($this->chartDetails + ['progression_date' => $this->progressionDate], ['chart', 'progressed']);
         $this->assertTrue($validator->passes());
     }
 
@@ -59,9 +59,15 @@ class ChartValidationTest extends TestCase
      *
      * @return void
      */
-    public function testValidateMissingExtraInputFailure()
+    public function testValidateMissingSolarInputFailure()
     {
         $validator = Chart::validate($this->chartDetails, 'chart', 'solar');
+        $this->assertTrue($validator->fails());
+    }
+
+    public function testValidateMissingProgressedInputFailure()
+    {
+        $validator = Chart::validate($this->chartDetails, 'chart', 'progressed');
         $this->assertTrue($validator->fails());
     }
 
