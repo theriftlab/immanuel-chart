@@ -111,7 +111,7 @@ class Chart
     {
         $key = base64_encode(implode($scriptArgs));
 
-        return Cache::rememberForever($key, function () use ($scriptArgs) {
+        return Cache::remember($key, 60*60*24, function () use ($scriptArgs) {
             return $this->generateChartData($scriptArgs);
         });
     }
