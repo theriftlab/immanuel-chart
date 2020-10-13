@@ -1,4 +1,4 @@
-import re, sys, json
+import re, sys, json, string
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
@@ -73,7 +73,7 @@ latitude = float(args['latitude'])
 longitude = float(args['longitude'])
 birth_date = args['birth_date']
 birth_time = args['birth_time']
-house_system = args['house_system']
+house_system = string.capwords(args['house_system'])
 solar_return_year = args['solar_return_year'] if 'solar_return_year' in args else 0;
 progression_date = args['progression_date'] if 'progression_date' in args else 0;
 

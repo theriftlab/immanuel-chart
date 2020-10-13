@@ -16,23 +16,25 @@ class ChartValidator
 
     /**
      * House systems accepted by Flatlib.
+     * These are lowercased for validation since the script
+     * itself now applies the correct case requried by FlatLib.
      *
      */
     protected $houseSystems = [
-        'Placidus',
-        'Koch',
-        'Porphyrius',
-        'Regiomontanus',
-        'Campanus',
-        'Equal',
-        'Equal 2',
-        'Vehlow Equal',
-        'Whole Sign',
-        'Meridian',
-        'Azimuthal',
-        'Polich Page',
-        'Alcabitus',
-        'Morinus',
+        'placidus',
+        'koch',
+        'porphyrius',
+        'regiomontanus',
+        'campanus',
+        'equal',
+        'equal 2',
+        'vehlow equal',
+        'whole sign',
+        'meridian',
+        'azimuthal',
+        'polich page',
+        'alcabitus',
+        'morinus',
     ];
 
     /**
@@ -66,6 +68,11 @@ class ChartValidator
     {
         $ruleTypes = !empty($ruleTypes) ? Arr::flatten($ruleTypes) : ['chart'];
         $rules = Arr::collapse(Arr::only($this->rules, $ruleTypes));
+
+        if (!empty($inputs['house_system'])) {
+            $inputs['house_system'] = strtolower($inputs['house_system']);
+        }
+
         return Validator::make($inputs, $rules);
     }
 }

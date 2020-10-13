@@ -83,4 +83,16 @@ class ChartValidationTest extends TestCase
         $validator = Chart::validate($chartDetails, 'chart');
         $this->assertTrue($validator->fails());
     }
+
+    /**
+     * Test validate() passes with house_system in any case.
+     *
+     * @return void
+     */
+    public function testHouseSystemCaseInsensitivity()
+    {
+        $chartDetails = ['house_system' => 'POLICH page'] + $this->chartDetails;
+        $validator = Chart::validate($chartDetails, 'chart');
+        $this->assertTrue($validator->passes());
+    }
 }
