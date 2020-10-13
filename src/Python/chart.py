@@ -103,10 +103,10 @@ main_chart = Chart(chart_date, chart_pos, hsys=house_system, IDs=LIST_OBJECTS)
 chart = main_chart.solarReturn(solar_return_year) if chart_type == 'solar' else main_chart
 
 # format chart date into PHP/SOAP-friendly format
-offset = chart_date.utcoffset.toList()
-soap_chart_date = '-'.join(str(i).zfill(2) for i in chart_date.date.toList()[1:])
+offset = chart.date.utcoffset.toList()
+soap_chart_date = '-'.join(str(i).zfill(2) for i in chart.date.date.toList()[1:])
 soap_chart_date += 'T'
-soap_chart_date += ':'.join(str(i).zfill(2) for i in chart_date.time.toList()[1:])
+soap_chart_date += ':'.join(str(i).zfill(2) for i in chart.date.time.toList()[1:])
 soap_chart_date += str(offset[0]) + str(offset[1]).zfill(2) + ':' + str(offset[2]).zfill(2)
 
 # collate data into JSON object
