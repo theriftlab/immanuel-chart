@@ -145,7 +145,7 @@ for obj in chart.objects:
         'signAngle': obj.signlon,
         'formattedChartAngle': format_angle(obj.lon),
         'formattedSignAngle': format_angle(obj.signlon),
-        'movement': obj.movement(),
+        'movement': obj.movement() if (obj.movement() != 'Retrogade') else 'Retrograde',
         'aspects': {}
     }
 
