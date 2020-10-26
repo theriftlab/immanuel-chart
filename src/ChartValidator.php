@@ -17,7 +17,7 @@ class ChartValidator
     /**
      * House systems accepted by Flatlib.
      * These are lowercased for validation since the script
-     * itself now applies the correct case requried by FlatLib.
+     * itself now applies the correct case required by FlatLib.
      *
      */
     protected $houseSystems = [
