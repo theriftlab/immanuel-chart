@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Arr;
-use Sunlight\ImmanuelChart\Tests\TestCase;
-use Sunlight\ImmanuelChart\Facades\Chart;
+use RiftLab\ImmanuelChart\Tests\TestCase;
+use RiftLab\ImmanuelChart\Facades\Chart;
 
 class ChartValidationTest extends TestCase
 {

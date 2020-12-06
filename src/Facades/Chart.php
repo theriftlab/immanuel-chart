@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunlight\ImmanuelChart\Facades;
+namespace RiftLab\ImmanuelChart\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -8,6 +8,6 @@ class Chart extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Sunlight\ImmanuelChart\Chart::class;
+        return \RiftLab\ImmanuelChart\Chart::class;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunlight\ImmanuelChart;
+namespace RiftLab\ImmanuelChart;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;

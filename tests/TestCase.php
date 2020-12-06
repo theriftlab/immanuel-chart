@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunlight\ImmanuelChart\Tests;
+namespace RiftLab\ImmanuelChart\Tests;
 
 class TestCase extends \Lumen\Testbench\TestCase
 {

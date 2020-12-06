@@ -1,9 +1,9 @@
 <?php
 
-namespace Sunlight\ImmanuelChart;
+namespace RiftLab\ImmanuelChart;
 
 use Illuminate\Support\Facades\Cache;
-use Sunlight\ImmanuelChart\Facades\ChartValidator;
+use RiftLab\ImmanuelChart\Facades\ChartValidator;
 use Symfony\Component\Process\Process;
 
 class Chart

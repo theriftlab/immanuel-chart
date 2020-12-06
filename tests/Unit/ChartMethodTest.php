@@ -1,8 +1,8 @@
 <?php
 
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Sunlight\ImmanuelChart\Tests\TestCase;
-use Sunlight\ImmanuelChart\Facades\Chart;
+use RiftLab\ImmanuelChart\Tests\TestCase;
+use RiftLab\ImmanuelChart\Facades\Chart;
 
 class ChartMethodTest extends TestCase
 {

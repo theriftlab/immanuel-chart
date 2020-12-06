@@ -1,6 +1,3 @@
-
-
-
 # Immanuel Chart
 
 Immanuel Chart provides classes and facades for the passing, validating and retrieving of data between a Lumen project and a bundled Python script that uses the [Flatlib library](https://github.com/flatangle/flatlib/). Currently the Python script is included as a standalone file in this package's repo.
@@ -8,7 +5,7 @@ Immanuel Chart provides classes and facades for the passing, validating and retr
 ## Installation
 
 ```bash
-composer require sunlight/immanuel-chart
+composer require theriftlab/immanuel-chart
 ```
 
 ## Usage
@@ -26,7 +23,7 @@ Valid house systems, input field names, and validation types are defined in the 
 ### Example
 
 ```php
-use Sunlight\ImmanuelChart\Facades\Chart;
+use RiftLab\ImmanuelChart\Facades\Chart;
 
 ...
 

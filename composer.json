@@ -1,22 +1,22 @@
 {
-    "name": "sunlight/immanuel-chart",
+    "name": "theriftlab/immanuel-chart",
     "description": "Lumen package - bridge to a Python astrology script powered by Flatlib.",
     "type": "library",
     "license": "GPL-2.0-only",
     "authors": [
         {
             "name": "Robert Davies",
-            "email": "rob@sunlightdigital.net"
+            "email": "robert@theriftlab.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Sunlight\\ImmanuelChart\\": "src"
+            "RiftLab\\ImmanuelChart\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Sunlight\\ImmanuelChart\\Tests\\": "tests"
+            "RiftLab\\ImmanuelChart\\Tests\\": "tests"
         }
     },
     "require": {
