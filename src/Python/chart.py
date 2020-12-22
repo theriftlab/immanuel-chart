@@ -26,9 +26,6 @@ if 'type' in args:
     elif args['type'] == 'progressed':
         required_args.add('progression_date')
 
-if 'return_chart' in args and args['return_chart'] == 'both':
-    required_args.add('mixed_chart_aspects')
-
 # ensure they all exist
 if not required_args <= args.keys():
     sys.exit(json.dumps({'error': 'Missing arguments'}))
@@ -42,46 +39,80 @@ birth_time = args['birth_time']
 house_system = string.capwords(args['house_system'])
 
 # store optional args
-return_chart = args['return_chart'] if 'return_chart' in args else 'primary'
-mixed_chart_aspects = args['mixed_chart_aspects'] if 'mixed_chart_aspects' in args else 'both'
+secondary_chart_type = args['secondary_type'] if 'secondary_type' in args else None
+with_transits = args['with_transits'] if 'with_transits' in args else None
+
+aspects = args['aspects'] if 'aspects' in args else 'primary'
+
 solar_return_year = args['solar_return_year'] if 'solar_return_year' in args else None
+solar_return_latitude = float(args['solar_return_latitude']) if 'solar_return_latitude' in args else None
+solar_return_longitude = float(args['solar_return_longitude']) if 'solar_return_longitude' in args else None
+
 progression_date = args['progression_date'] if 'progression_date' in args else None
+progression_latitude = float(args['progression_latitude']) if 'progression_latitude' in args else None
+progression_longitude = float(args['progression_longitude']) if 'progression_longitude' in args else None
+
+transit_latitude = float(args['transit_latitude']) if 'transit_latitude' in args else None
+transit_longitude = float(args['transit_longitude']) if 'transit_longitude' in args else None
 transit_date = args['transit_date'] if 'transit_date' in args else None
 transit_time = args['transit_time'] if 'transit_time' in args else None
-secondary_latitude = args['secondary_latitude'] if 'secondary_latitude' in args else None
-secondary_longitude = args['secondary_longitude'] if 'secondary_longitude' in args else None
 
-# generate the chart
-primary_pos = GeoPos(latitude, longitude)
-primary_date = Datetime(date=birth_date, time=birth_time, pos=primary_pos)
-primary_chart = Chart(primary_date, primary_pos, hsys=house_system, IDs=const.LIST_OBJECTS)
+force_primary_chart_key = args['force_primary_chart_key'] if 'force_primary_chart_key' in args else None
 
-# see if we need a secondary chart
-secondary_pos = GeoPos(secondary_latitude, secondary_longitude) if secondary_latitude is not None and secondary_longitude is not None else primary_pos
+# generate the main chart
+pos = GeoPos(latitude, longitude)
+datetime = Datetime(date=birth_date, time=birth_time, pos=pos)
+chart = Chart(datetime, pos, hsys=house_system, IDs=const.LIST_OBJECTS)
 
-if chart_type == 'solar':
-    secondary_chart = primary_chart.solarReturn(solar_return_year, secondary_pos)
+# generate any extra charts
+if chart_type == 'solar' or secondary_chart_type == 'solar':
+    solar_return_pos = GeoPos(solar_return_latitude, solar_return_longitude) if solar_return_latitude is not None and solar_return_longitude is not None else pos
+    solar_return_chart = chart.solarReturn(solar_return_year, solar_return_pos)
+
+if chart_type == 'progressed' or secondary_chart_type == 'progressed':
+    progression_pos = GeoPos(progression_latitude, progression_longitude) if progression_latitude is not None and progression_longitude is not None else pos
+    progressed_chart = chart.progressedChart(progression_date, progression_pos)
+
+if with_transits == 'true':
+    transit_pos = GeoPos(transit_latitude, transit_longitude) if transit_latitude is not None and transit_longitude is not None else pos
+    transit_datetime = Datetime(date=transit_date, time=transit_time, pos=transit_pos) if transit_date is not None and transit_time is not None else 0
+    transit_chart = chart.transits(transit_datetime, transit_pos)
+
+# work out which charts to return
+if chart_type == 'natal':
+    primary_chart = chart
+elif chart_type == 'solar':
+    primary_chart = solar_return_chart
 elif chart_type == 'progressed':
-    secondary_chart = primary_chart.progressedChart(progression_date, secondary_pos)
-elif chart_type == 'transits':
-    transit_datetime = Datetime(date=transit_date, time=transit_time, pos=secondary_pos) if transit_date is not None and transit_time is not None else 0
-    secondary_chart = primary_chart.transits(transit_datetime, secondary_pos)
-else:
-    secondary_chart = None
+    primary_chart = progressed_chart
 
-# now choose what to return
-if return_chart == 'primary':
+if secondary_chart_type == 'natal':
+    secondary_chart = chart
+elif secondary_chart_type == 'solar':
+    secondary_chart = solar_return_chart
+elif secondary_chart_type == 'progressed':
+    secondary_chart = progressed_chart
+
+# calculate requested aspects
+if aspects == 'primary':
     chart_data = ChartData(primary_chart)
-    print(json.dumps(chart_data.data))
-elif secondary_chart is not None:
-    if return_chart == 'secondary':
-        chart_data = ChartData(secondary_chart)
-        print(json.dumps(chart_data.data))
-    elif return_chart == 'both':
-        chart_data = ChartData(primary_chart, secondary_chart, mixed_chart_aspects)
-        secondary_chart_data = ChartData(secondary_chart, primary_chart, mixed_chart_aspects)
-        print(json.dumps({
-            'primary': chart_data.data,
-            'secondary': secondary_chart_data.data,
-            'aspects': mixed_chart_aspects,
-        }))
+elif aspects == 'secondary':
+    chart_data = ChartData(primary_chart, secondary_chart)
+elif aspects == 'transits':
+    chart_data = ChartData(primary_chart, transit_chart)
+
+# return requested chart data
+return_data = {
+    'primary': chart_data.data
+}
+
+if secondary_chart_type == 'solar' or secondary_chart_type == 'progressed':
+    return_data['secondary'] = ChartData(secondary_chart).data
+
+if with_transits:
+    return_data['transits'] = ChartData(transit_chart).data
+
+if force_primary_chart_key != 'true' and secondary_chart_type is None and with_transits != 'true':
+    return_data = return_data['primary']
+
+print(json.dumps(return_data))

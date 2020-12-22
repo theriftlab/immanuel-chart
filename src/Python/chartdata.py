@@ -6,7 +6,7 @@ from riftlib.chart import Chart
 class ChartData:
 
     # initialise our chart data
-    def __init__(self, primary_chart, secondary_chart=None, aspects='primary'):
+    def __init__(self, primary_chart, secondary_chart=None):
         self.aspect_names = {
             0: 'Conjunct',
             30: 'Semisextile',
@@ -25,7 +25,6 @@ class ChartData:
 
         self.primary_chart = primary_chart
         self.secondary_chart = secondary_chart
-        self.aspects = aspects
         self.set_data()
 
     # populate the data we're going to return
@@ -47,10 +46,7 @@ class ChartData:
 
     # planets & points
     def populate_object_data(self):
-        if self.aspects == 'secondary':
-            objects = self.secondary_chart.objects
-        else:
-            objects = self.primary_chart.objects
+        objects = self.primary_chart.objects
 
         for obj in objects:
             formatted_obj = {
@@ -64,10 +60,11 @@ class ChartData:
                 'aspects': {}
             }
 
-            if self.aspects == 'primary':
-                aspected_objects = self.primary_chart.objects.getObjectsAspecting(obj, const.ALL_ASPECTS)
-            else:
+            if self.secondary_chart is not None:
                 aspected_objects = self.secondary_chart.objects.getObjectsAspecting(obj, const.ALL_ASPECTS)
+            else:
+                aspected_objects = self.primary_chart.objects.getObjectsAspecting(obj, const.ALL_ASPECTS)
+
 
             for asp_obj in aspected_objects:
                 aspect = getAspect(obj, asp_obj, const.ALL_ASPECTS)

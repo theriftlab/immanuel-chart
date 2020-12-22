@@ -9,11 +9,16 @@ use Symfony\Component\Process\Process;
 class Chart
 {
     /**
-     * This class will only store the basic minimum data required for creating a
-     * natal chart.
+     * Store the basic minimum options required for creating a natal chart.
      *
      */
     protected $options;
+
+    /**
+     * Store required args to send to Python script so we can chain methods.
+     *
+     */
+    protected $scriptArgs;
 
     /**
      * Set up by storing options.
@@ -21,13 +26,13 @@ class Chart
      */
     public function create(array $options)
     {
-        $this->options = array_replace([
+        $this->options = array_intersect_key($options, [
             'latitude' => '',
             'longitude' => '',
             'birth_date' => '',
             'birth_time' => '',
             'house_system' => '',
-        ], $options);
+        ]);
 
         return $this;
     }
@@ -57,50 +62,141 @@ class Chart
     }
 
     /**
+     * Add relevant data to script args for a natal chart.
+     *
+     */
+    public function addNatalChart()
+    {
+        $key = isset($this->scriptArgs['type']) ? 'secondary_type' : 'type';
+        $this->scriptArgs[$key] = 'natal';
+        return $this;
+    }
+
+    /**
+     * Add relevant data to script args for a solar return chart.
+     *
+     */
+    public function addSolarReturnChart(int $year, float $latitude = null, float $longitude = null)
+    {
+        $key = isset($this->scriptArgs['type']) ? 'secondary_type' : 'type';
+        $this->scriptArgs[$key] = 'solar';
+        $this->scriptArgs['solar_return_year'] = $year ?? date('Y');
+
+        if ($latitude && $longitude) {
+            $this->scriptArgs += [
+                'solar_return_latitude' => $latitude,
+                'solar_return_longitude' => $longitude,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add relevant data to script args for a progressed chart.
+     *
+     */
+    public function addProgressedChart(string $date, float $latitude = null, float $longitude = null)
+    {
+        $key = isset($this->scriptArgs['type']) ? 'secondary_type' : 'type';
+        $this->scriptArgs[$key] = 'progressed';
+        $this->scriptArgs['progression_date'] = $date ?? date('Y-m-d');
+
+        if ($latitude && $longitude) {
+            $this->scriptArgs += [
+                'progression_latitude' => $latitude,
+                'progression_longitude' => $longitude,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add relevant data to script args to append a transit chart.
+     *
+     */
+    public function addTransits(string $date = null, string $time = null, float $latitude = null, float $longitude = null)
+    {
+        $this->scriptArgs += [
+            'with_transits' => 'true',
+            'transit_date' => $date ?? date('Y-m-d'),
+            'transit_time' => $time ?? '00:00:00',
+        ];
+
+        if ($latitude && $longitude) {
+            $this->scriptArgs += [
+                'transit_latitude' => $latitude,
+                'transit_longitude' => $longitude,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Main chart aspects to solar return chart.
+     *
+     */
+    public function aspectsToSolarReturn()
+    {
+        if ((isset($this->scriptArgs['type']) && $this->scriptArgs['type'] === 'solar') || (isset($this->scriptArgs['secondary_type']) && $this->scriptArgs['secondary_type'] === 'solar')) {
+            $this->scriptArgs['aspects'] = 'secondary';
+            return $this;
+        }
+
+        throw new \Exception('No solar return chart to aspect to.');
+    }
+
+    /**
+     * Main chart aspects to progressed chart.
+     *
+     */
+    public function aspectsToProgressed()
+    {
+        if ((isset($this->scriptArgs['type']) && $this->scriptArgs['type'] === 'progressed') || (isset($this->scriptArgs['secondary_type']) && $this->scriptArgs['secondary_type'] === 'progressed')) {
+            $this->scriptArgs['aspects'] = 'secondary';
+            return $this;
+        }
+
+        throw new \Exception('No progressed chart to aspect to.');
+    }
+
+    /**
+     * Main chart aspects to transit chart.
+     *
+     */
+    public function aspectsToTransits()
+    {
+        if (isset($this->scriptArgs['with_transits']) && $this->scriptArgs['with_transits'] === 'true') {
+            $this->scriptArgs['aspects'] = 'transits';
+            return $this;
+        }
+
+        throw new \Exception('No transits to aspect to.');
+    }
+
+    /**
+     * Sent script args to script & return actual chart data from chained methods.
+     *
+     */
+    public function get()
+    {
+        if (isset($this->scriptArgs['type'])) {
+            $scriptArgs = $this->options + $this->scriptArgs;
+            return $this->getChartData($scriptArgs);
+        }
+
+        throw new \Exception('No chart type(s) specified.');
+    }
+
+    /**
      * Validation courtesy of the ChartValidator class.
      *
      */
     public function validate(array $inputs, ...$ruleTypes)
     {
         return ChartValidator::validate($inputs, ...$ruleTypes);
-    }
-
-    /**
-     * Return a natal chart.
-     *
-     */
-    public function getNatalChart()
-    {
-        $scriptArgs = $this->options + [
-            'type' => 'natal',
-        ];
-        return $this->getChartData($scriptArgs);
-    }
-
-    /**
-     * Return a solar return chart.
-     *
-     */
-    public function getSolarReturnChart(int $year)
-    {
-        $scriptArgs = $this->options + [
-            'type' => 'solar',
-            'solar_return_year' => $year,
-        ];
-        return $this->getChartData($scriptArgs);
-    }
-
-    /**
-     * Return a progressed chart.
-     *
-     */
-    public function getProgressedChart($date = null)
-    {
-        $scriptArgs = $this->options + [
-            'type' => 'progressed',
-            'progression_date' => $date ?? date('Y-m-d'),
-        ];
-        return $this->getChartData($scriptArgs);
     }
 
     /*

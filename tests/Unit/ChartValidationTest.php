@@ -73,14 +73,14 @@ class ChartValidationTest extends TestCase
 
     /**
      * Test validate() fails with malformed data.
-     * In this case we pass an incorrectly formatted birth date.
+     * In this case we pass an incorrectly formatted transit date.
      *
      * @return void
      */
     public function testValidateBadInputFailure()
     {
-        $chartDetails = ['birth_date' => '30/10/2000'] + $this->chartDetails;
-        $validator = Chart::validate($chartDetails, 'chart');
+        $optionalDetails = ['transit_date' => '30/10/2000'];
+        $validator = Chart::validate($optionalDetails, 'optional');
         $this->assertTrue($validator->fails());
     }
 

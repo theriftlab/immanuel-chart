@@ -56,7 +56,17 @@ class ChartValidator
             ],
             'progressed' => [
                 'progression_date' => ['required', 'date_format:Y-m-d'],
-            ]
+            ],
+            'optional' => [
+                'solar_return_latitude' => 'numeric',
+                'solar_return_longitude' => 'numeric',
+                'progression_latitude' => 'numeric',
+                'progression_longitude' => 'numeric',
+                'transit_latitude' => 'numeric',
+                'transit_longitude' => 'numeric',
+                'transit_date' => 'date_format:Y-m-d',
+                'transit_time' => 'date_format:H:i',
+            ],
         ];
     }
 
