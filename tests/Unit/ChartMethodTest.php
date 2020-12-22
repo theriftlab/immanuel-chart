@@ -231,11 +231,22 @@ class ChartMethodTest extends TestCase
     }
 
     /**
+     * Test exception for get() with no base chart.
+     *
+     * @return void
+     */
+    public function testGetDataExceptionNoBaseChart()
+    {
+        $this->expectException(\Exception::class);
+        $chartData = Chart::addNatalChart()->get();
+    }
+
+    /**
      * Test exception for requesting nonexistent chart.
      *
      * @return void
      */
-    public function testGetDataException()
+    public function testGetDataExceptionNonexistentChart()
     {
         $this->expectException(\Exception::class);
         $chartData = Chart::create($this->chartDetails)->get();

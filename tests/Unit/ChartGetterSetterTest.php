@@ -37,11 +37,10 @@ class ChartGetterSetterTest extends TestCase
     {
         $chart = Chart::create($this->chartDetails);
         $chart->birth_date = '2000-04-30';
-        $natalChartData = $chart->getNatalChart();
+        $natalChartData = $chart->addNatalChart()->get();
         $this->assertArraySubset([
             'planets' => [
                 'sun' => [
-                    'planet' => 'Sun',
                     'sign' => 'Taurus',
                 ],
             ],
