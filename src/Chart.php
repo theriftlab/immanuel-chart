@@ -112,6 +112,28 @@ class Chart
     }
 
     /**
+     * Add relevant data to script args for a synastry chart.
+     * This will always be a secondary chart.
+     *
+     */
+    public function addSynastryChart(string $date, string $time, float $latitude, float $longitude)
+    {
+        if (!isset($this->scriptArgs['type'])) {
+            throw new \Exception('No primary chart defined.');
+        }
+
+        $this->scriptArgs = [
+            'secondary_type' => 'synastry',
+            'synastry_date' => $date,
+            'synastry_time' => $time,
+            'synastry_latitude' => $latitude,
+            'synastry_longitude' => $longitude,
+        ] + $this->scriptArgs;
+
+        return $this;
+    }
+
+    /**
      * Add relevant data to script args to append a transit chart.
      *
      */

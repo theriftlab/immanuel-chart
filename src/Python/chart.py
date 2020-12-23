@@ -26,6 +26,9 @@ if 'type' in args:
     elif args['type'] == 'progressed':
         required_args.add('progression_date')
 
+if 'secondary_type' in args and args['secondary_type'] == 'synastry':
+    required_args.update(['synastry_date', 'synastry_time', 'synastry_latitude', 'synastry_longitude'])
+
 # ensure they all exist
 if not required_args <= args.keys():
     sys.exit(json.dumps({'error': 'Missing arguments'}))
@@ -59,6 +62,12 @@ transit_time = args['transit_time'] if 'transit_time' in args else None
 
 force_primary_chart_key = args['force_primary_chart_key'] if 'force_primary_chart_key' in args else None
 
+if secondary_chart_type == 'synastry':
+    synastry_date = args['synastry_date']
+    synastry_time = args['synastry_time']
+    synastry_latitude = float(args['synastry_latitude'])
+    synastry_longitude = float(args['synastry_longitude'])
+
 # generate the main chart
 pos = GeoPos(latitude, longitude)
 datetime = Datetime(date=birth_date, time=birth_time, pos=pos)
@@ -72,6 +81,11 @@ if chart_type == 'solar' or secondary_chart_type == 'solar':
 if chart_type == 'progressed' or secondary_chart_type == 'progressed':
     progression_pos = GeoPos(progression_latitude, progression_longitude) if progression_latitude is not None and progression_longitude is not None else pos
     progressed_chart = chart.progressedChart(progression_date, progression_pos)
+
+if secondary_chart_type == 'synastry':
+    synastry_pos = GeoPos(synastry_latitude, synastry_longitude)
+    synastry_datetime = Datetime(date=synastry_date, time=synastry_time, pos=synastry_pos)
+    synastry_chart = Chart(synastry_datetime, synastry_pos, hsys=house_system, IDs=const.LIST_OBJECTS)
 
 if with_transits == 'true':
     transit_pos = GeoPos(transit_latitude, transit_longitude) if transit_latitude is not None and transit_longitude is not None else pos
@@ -92,6 +106,8 @@ elif secondary_chart_type == 'solar':
     secondary_chart = solar_return_chart
 elif secondary_chart_type == 'progressed':
     secondary_chart = progressed_chart
+elif secondary_chart_type == 'synastry':
+    secondary_chart = synastry_chart
 
 # calculate requested aspects
 if aspects == 'primary':
@@ -106,7 +122,7 @@ return_data = {
     'primary': chart_data.data
 }
 
-if secondary_chart_type == 'solar' or secondary_chart_type == 'progressed':
+if secondary_chart_type in ['solar', 'progressed', 'synastry']:
     return_data['secondary'] = ChartData(secondary_chart).data
 
 if with_transits:

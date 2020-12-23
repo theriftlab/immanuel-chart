@@ -45,6 +45,17 @@ class ChartMethodTest extends TestCase
         ],
     ];
 
+    protected $synastryDataSubset = [
+        'planets' => [
+            'sun' => [
+                'sign' => 'Aquarius',
+            ],
+            'moon' => [
+                'sign' => 'Sagittarius',
+            ],
+        ],
+    ];
+
     protected $transitDataSubset = [
         'planets' => [
             'sun' => [
@@ -141,6 +152,19 @@ class ChartMethodTest extends TestCase
     }
 
     /**
+     * Test addSynastryChart() data with natal chart.
+     */
+    public function testSynastryChartData()
+    {
+        $synastryChartData = Chart::create($this->chartDetails)
+            ->addNatalChart()
+            ->addSynastryChart(...$this->synastryChartArgs)
+            ->get();
+
+        $this->assertArraySubset($this->synastryDataSubset, $synastryChartData['secondary']);
+    }
+
+    /**
      * Test transit data.
      *
      * @return void
@@ -228,6 +252,17 @@ class ChartMethodTest extends TestCase
         $chart = Chart::create($this->chartDetails)->addNatalChart();
         $this->expectException(\Exception::class);
         $chartData = $chart->aspectsToTransits()->get();
+    }
+
+    /**
+     * Test exception for requesting a synastry chart with no primary chart.
+     *
+     * @return void
+     */
+    public function testSynastryWithNoPrimaryChartException()
+    {
+        $this->expectException(\Exception::class);
+        $chartData = Chart::addSynastryChart(...$this->synastryChartArgs);
     }
 
     /**
