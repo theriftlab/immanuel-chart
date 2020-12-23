@@ -118,12 +118,9 @@ class Chart
      */
     public function addSynastryChart(string $date, string $time, float $latitude, float $longitude)
     {
-        if (!isset($this->scriptArgs['type'])) {
-            throw new \Exception('No primary chart defined.');
-        }
+        $this->addChart('synastry');
 
         $this->scriptArgs = [
-            'secondary_type' => 'synastry',
             'synastry_date' => $date,
             'synastry_time' => $time,
             'synastry_latitude' => $latitude,
@@ -139,6 +136,10 @@ class Chart
      */
     public function addTransits(string $date = null, string $time = null, float $latitude = null, float $longitude = null)
     {
+        if (!isset($this->scriptArgs['type'])) {
+            throw new \Exception('No chart type(s) specified.');
+        }
+
         $this->scriptArgs += [
             'with_transits' => 'true',
             'transit_date' => $date ?? date('Y-m-d'),
@@ -177,6 +178,20 @@ class Chart
     {
         if (!in_array('progressed', $this->scriptArgs)) {
             throw new \Exception('No progressed chart to aspect to.');
+        }
+
+        $this->scriptArgs['aspects'] = 'secondary';
+        return $this;
+    }
+
+    /**
+     * Main chart aspects to synastry chart.
+     *
+     */
+    public function aspectsToSynastry()
+    {
+        if ($this->scriptArgs['secondary_type'] !== 'synastry') {
+            throw new \Exception('No synastry chart to aspect to.');
         }
 
         $this->scriptArgs['aspects'] = 'secondary';
@@ -231,8 +246,18 @@ class Chart
      */
     protected function addChart(string $type)
     {
-        $key = isset($this->scriptArgs['type']) ? 'secondary_type' : 'type';
-        $this->scriptArgs[$key] = $type;
+        if (isset($this->scriptArgs['secondary_type'])) {
+            throw new \Exception('Only two non-transit charts may be returned.');
+        }
+        elseif (!isset($this->scriptArgs['type'])) {
+            if ($type === 'synastry') {
+                throw new \Exception('No primary chart defined.');
+            }
+            $this->scriptArgs['type'] = $type;
+        }
+        else {
+            $this->scriptArgs['secondary_type'] = $type;
+        }
     }
 
     /*

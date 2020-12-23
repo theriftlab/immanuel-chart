@@ -79,6 +79,30 @@ class ChartMethodTest extends TestCase
         ],
     ];
 
+    protected $natalAspectsToProgressionDataSubset = [
+        'planets' => [
+            'sun' => [
+                'aspects' => [
+                    'moon' => [
+                        'type' => 'Sextile',
+                    ]
+                ],
+            ],
+        ],
+    ];
+
+    protected $natalAspectsToSynastryDataSubset = [
+        'planets' => [
+            'moon' => [
+                'aspects' => [
+                    'moon' => [
+                        'type' => 'Conjunct',
+                    ]
+                ],
+            ],
+        ],
+    ];
+
     protected $natalAspectsToTransitsDataSubset = [
         'planets' => [
             'sun' => [
@@ -206,22 +230,45 @@ class ChartMethodTest extends TestCase
     /**
      * Test double chart chaining data with transits, with aspects to secondary chart and transits.
      *
-     * @return void
      */
-    public function testDoubleChartWithTransitsMixedAspectsData()
+    public function testNatalAspectsToSolarReturn()
     {
-        $chart = Chart::create($this->chartDetails)
+        $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
             ->addSolarReturnChart($this->solarReturnYear)
-            ->addTransits($this->transitDate, $this->transitTime);
-
-        $chartData = $chart
             ->aspectsToSolarReturn()
             ->get();
 
         $this->assertArraySubset($this->natalAspectsToSolarReturnDataSubset, $chartData['primary']);
+    }
 
-        $chartData = $chart
+    public function testNatalAspectsToProgressed()
+    {
+        $chartData = Chart::create($this->chartDetails)
+            ->addNatalChart()
+            ->addProgressedChart($this->progressionDate)
+            ->aspectsToProgressed()
+            ->get();
+
+        $this->assertArraySubset($this->natalAspectsToProgressionDataSubset, $chartData['primary']);
+    }
+
+    public function testNatalAspectsToSynastry()
+    {
+        $chartData = Chart::create($this->chartDetails)
+            ->addNatalChart()
+            ->addSynastryChart(...$this->synastryChartArgs)
+            ->aspectsToSynastry()
+            ->get();
+
+        $this->assertArraySubset($this->natalAspectsToSynastryDataSubset, $chartData['primary']);
+    }
+
+    public function testNatalAspectsToTransits()
+    {
+        $chartData = Chart::create($this->chartDetails)
+            ->addNatalChart()
+            ->addTransits($this->transitDate, $this->transitTime)
             ->aspectsToTransits()
             ->get();
 
@@ -231,7 +278,6 @@ class ChartMethodTest extends TestCase
     /**
      * Test exceptions for requesting aspects to nonexistent charts.
      *
-     * @return void
      */
     public function testSolarReturnAspectException()
     {
@@ -255,6 +301,17 @@ class ChartMethodTest extends TestCase
     }
 
     /**
+     * Test exception for requesting too many charts.
+     *
+     * @return void
+     */
+    public function testTooManyChartsException()
+    {
+        $this->expectException(\Exception::class);
+        $chartData = Chart::addNatalChart()->addSolarReturnChart($this->solarReturnYear)->addSynastryChart(...$this->synastryChartArgs);
+    }
+
+    /**
      * Test exception for requesting a synastry chart with no primary chart.
      *
      * @return void
@@ -263,6 +320,17 @@ class ChartMethodTest extends TestCase
     {
         $this->expectException(\Exception::class);
         $chartData = Chart::addSynastryChart(...$this->synastryChartArgs);
+    }
+
+    /**
+     * Test exception for requesting transits with no primary chart.
+     *
+     * @return void
+     */
+    public function testTransitsWithNoPrimaryChartException()
+    {
+        $this->expectException(\Exception::class);
+        $chartData = Chart::addTransits();
     }
 
     /**

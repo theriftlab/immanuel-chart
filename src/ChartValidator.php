@@ -57,6 +57,12 @@ class ChartValidator
             'progressed' => [
                 'progression_date' => ['required', 'date_format:Y-m-d'],
             ],
+            'synastry' => [
+                'synastry_date' => ['required', 'date_format:Y-m-d'],
+                'synastry_time' => ['required', 'date_format:H:i'],
+                'synastry_latitude' => ['required', 'numeric'],
+                'synastry_longitude' => ['required', 'numeric'],
+            ],
             'optional' => [
                 'solar_return_latitude' => 'numeric',
                 'solar_return_longitude' => 'numeric',

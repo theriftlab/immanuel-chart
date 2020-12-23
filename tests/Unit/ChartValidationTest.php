@@ -9,7 +9,6 @@ class ChartValidationTest extends TestCase
     /**
      * Test validate() doesn't fail.
      *
-     * @return void
      */
     public function testValidatePasses()
     {
@@ -22,9 +21,21 @@ class ChartValidationTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
-    public function testValidateExtraPasses()
+    public function testValidateSolarReturnPasses()
     {
         $validator = Chart::validate($this->chartDetails + ['solar_return_year' => $this->solarReturnYear], 'chart', 'solar');
+        $this->assertTrue($validator->passes());
+    }
+
+    public function testValidateProgressedPasses()
+    {
+        $validator = Chart::validate($this->chartDetails + ['progression_date' => $this->progressionDate], 'chart', 'progressed');
+        $this->assertTrue($validator->passes());
+    }
+
+    public function testValidateSynastryPasses()
+    {
+        $validator = Chart::validate($this->chartDetails + $this->synastryChartDetails, 'chart', 'synastry');
         $this->assertTrue($validator->passes());
     }
 
