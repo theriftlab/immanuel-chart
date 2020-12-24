@@ -216,7 +216,7 @@ class Chart
      * Send script args to script & return chart data from chained methods.
      *
      */
-    public function get()
+    public function get($forcePrimaryOnSingleChart = false)
     {
         if (empty($this->options)) {
             throw new \Exception('No base chart options specified.');
@@ -226,8 +226,11 @@ class Chart
             throw new \Exception('No chart type(s) specified.');
         }
 
-        $scriptArgs = $this->options + $this->scriptArgs;
-        return $this->getChartData($scriptArgs);
+        if ($forcePrimaryOnSingleChart) {
+            $this->scriptArgs['force_primary_chart_key'] = 'true';
+        }
+
+        return $this->getChartData($this->options + $this->scriptArgs);
     }
 
     /**

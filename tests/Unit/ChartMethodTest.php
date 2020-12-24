@@ -176,6 +176,17 @@ class ChartMethodTest extends TestCase
     }
 
     /**
+     * Test forcing a single chart's data to still have the "primary" key.
+     *
+     * @return void
+     */
+    public function testSingleChartPrimary()
+    {
+        $chartData = Chart::create($this->chartDetails)->addNatalChart()->get(true);
+        $this->assertArrayHasKey('primary', $chartData);
+    }
+
+    /**
      * Test addSynastryChart() data with natal chart.
      */
     public function testSynastryChartData()
