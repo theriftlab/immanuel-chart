@@ -260,19 +260,6 @@ class Chart
         }
     }
 
-    /*
-     * Retreive cached chart data here, or generate if not cached.
-     *
-     */
-    protected function getChartData(array $scriptArgs)
-    {
-        $key = base64_encode(json_encode($scriptArgs));
-
-        return Cache::remember($key, 60*60*24, function () use ($scriptArgs) {
-            return $this->generateChartData($scriptArgs);
-        });
-    }
-
     /**
      * Generate the requested chart here.
      * Currently this uses the chart.py script, but could potentially aggregate
@@ -280,7 +267,7 @@ class Chart
      * chart.py will not perform its own validation.
      *
      */
-    protected function generateChartData(array $scriptArgs)
+    protected function getChartData(array $scriptArgs)
     {
         // Assemble command-line arguments
         $cmdScriptArgs = [];
