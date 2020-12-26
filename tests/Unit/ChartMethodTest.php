@@ -137,7 +137,7 @@ class ChartMethodTest extends TestCase
     public function testSolarReturnChartData()
     {
         $solarChartData = Chart::create($this->chartDetails)
-            ->addSolarReturnChart($this->solarReturnYear)
+            ->addSolarReturnChart()
             ->get();
 
         $this->assertArraySubset($this->solarReturnDataSubset, $solarChartData);
@@ -151,7 +151,7 @@ class ChartMethodTest extends TestCase
     public function testProgressedChartData()
     {
         $progressedChartData = Chart::create($this->chartDetails)
-            ->addProgressedChart($this->progressionDate)
+            ->addProgressedChart()
             ->get();
 
         $this->assertArraySubset($this->progressionDataSubset, $progressedChartData);
@@ -165,8 +165,8 @@ class ChartMethodTest extends TestCase
     public function testDoubleChartData()
     {
         $chartData = Chart::create($this->chartDetails)
-            ->addProgressedChart($this->progressionDate)
-            ->addSolarReturnChart($this->solarReturnYear)
+            ->addProgressedChart()
+            ->addSolarReturnChart()
             ->get();
 
         $this->assertArrayHasKey('primary', $chartData);
@@ -193,7 +193,7 @@ class ChartMethodTest extends TestCase
     {
         $synastryChartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addSynastryChart(...$this->synastryChartArgs)
+            ->addSynastryChart()
             ->get();
 
         $this->assertArraySubset($this->synastryDataSubset, $synastryChartData['secondary']);
@@ -208,7 +208,7 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addTransits($this->transitDate, $this->transitTime)
+            ->addTransits()
             ->get();
 
         $this->assertArrayHasKey('primary', $chartData);
@@ -226,8 +226,8 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addSolarReturnChart($this->solarReturnYear)
-            ->addTransits($this->transitDate, $this->transitTime)
+            ->addSolarReturnChart()
+            ->addTransits()
             ->get();
 
         $this->assertArrayHasKey('primary', $chartData);
@@ -246,7 +246,7 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addSolarReturnChart($this->solarReturnYear)
+            ->addSolarReturnChart()
             ->aspectsToSolarReturn()
             ->get();
 
@@ -257,7 +257,7 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addProgressedChart($this->progressionDate)
+            ->addProgressedChart()
             ->aspectsToProgressed()
             ->get();
 
@@ -268,7 +268,7 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addSynastryChart(...$this->synastryChartArgs)
+            ->addSynastryChart()
             ->aspectsToSynastry()
             ->get();
 
@@ -279,7 +279,7 @@ class ChartMethodTest extends TestCase
     {
         $chartData = Chart::create($this->chartDetails)
             ->addNatalChart()
-            ->addTransits($this->transitDate, $this->transitTime)
+            ->addTransits()
             ->aspectsToTransits()
             ->get();
 
@@ -319,7 +319,7 @@ class ChartMethodTest extends TestCase
     public function testTooManyChartsException()
     {
         $this->expectException(\Exception::class);
-        $chartData = Chart::addNatalChart()->addSolarReturnChart($this->solarReturnYear)->addSynastryChart(...$this->synastryChartArgs);
+        $chartData = Chart::addNatalChart()->addSolarReturnChart()->addSynastryChart();
     }
 
     /**
@@ -330,7 +330,7 @@ class ChartMethodTest extends TestCase
     public function testSynastryWithNoPrimaryChartException()
     {
         $this->expectException(\Exception::class);
-        $chartData = Chart::addSynastryChart(...$this->synastryChartArgs);
+        $chartData = Chart::addSynastryChart();
     }
 
     /**

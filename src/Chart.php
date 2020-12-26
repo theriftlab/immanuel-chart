@@ -9,7 +9,7 @@ use Symfony\Component\Process\Process;
 class Chart
 {
     /**
-     * Store the basic minimum options required for creating a natal chart.
+     * Store the options for generating charts, usually from a POST request.
      * This array is defined by create() and editable with a setter.
      *
      */
@@ -23,19 +23,13 @@ class Chart
     protected $scriptArgs;
 
     /**
-     * Set up by storing options.
+     * Set up by storing options. These should have been checked by the
+     * ChartValidator class before being fed into here.
      *
      */
     public function create(array $options)
     {
-        $this->options = array_intersect_key($options, [
-            'latitude' => '',
-            'longitude' => '',
-            'birth_date' => '',
-            'birth_time' => '',
-            'house_system' => '',
-        ]);
-
+        $this->options = $options;
         return $this;
     }
 
@@ -77,18 +71,9 @@ class Chart
      * Add relevant data to script args for a solar return chart.
      *
      */
-    public function addSolarReturnChart(int $year, float $latitude = null, float $longitude = null)
+    public function addSolarReturnChart()
     {
         $this->addChart('solar');
-        $this->scriptArgs['solar_return_year'] = $year ?? date('Y');
-
-        if ($latitude && $longitude) {
-            $this->scriptArgs += [
-                'solar_return_latitude' => $latitude,
-                'solar_return_longitude' => $longitude,
-            ];
-        }
-
         return $this;
     }
 
@@ -96,18 +81,9 @@ class Chart
      * Add relevant data to script args for a progressed chart.
      *
      */
-    public function addProgressedChart(string $date, float $latitude = null, float $longitude = null)
+    public function addProgressedChart()
     {
         $this->addChart('progressed');
-        $this->scriptArgs['progression_date'] = $date ?? date('Y-m-d');
-
-        if ($latitude && $longitude) {
-            $this->scriptArgs += [
-                'progression_latitude' => $latitude,
-                'progression_longitude' => $longitude,
-            ];
-        }
-
         return $this;
     }
 
@@ -116,17 +92,9 @@ class Chart
      * This will always be a secondary chart.
      *
      */
-    public function addSynastryChart(string $date, string $time, float $latitude, float $longitude)
+    public function addSynastryChart()
     {
         $this->addChart('synastry');
-
-        $this->scriptArgs = [
-            'synastry_date' => $date,
-            'synastry_time' => $time,
-            'synastry_latitude' => $latitude,
-            'synastry_longitude' => $longitude,
-        ] + $this->scriptArgs;
-
         return $this;
     }
 
@@ -134,25 +102,13 @@ class Chart
      * Add relevant data to script args to append a transit chart.
      *
      */
-    public function addTransits(string $date = null, string $time = null, float $latitude = null, float $longitude = null)
+    public function addTransits()
     {
         if (!isset($this->scriptArgs['type'])) {
             throw new \Exception('No chart type(s) specified.');
         }
 
-        $this->scriptArgs += [
-            'with_transits' => 'true',
-            'transit_date' => $date ?? date('Y-m-d'),
-            'transit_time' => $time ?? date('H:i:s'),
-        ];
-
-        if ($latitude && $longitude) {
-            $this->scriptArgs += [
-                'transit_latitude' => $latitude,
-                'transit_longitude' => $longitude,
-            ];
-        }
-
+        $this->scriptArgs['with_transits'] = 'true';
         return $this;
     }
 
