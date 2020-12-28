@@ -24,6 +24,6 @@ class TestCase extends \Lumen\Testbench\TestCase
         'synastry_longitude' => '-121.5829968',
 
         'transit_date' => '2021-07-01',
-        'transit_time' => '13:00:00',
+        'transit_time' => '13:00',
     ];
 }
