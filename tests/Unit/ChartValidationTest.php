@@ -12,7 +12,7 @@ class ChartValidationTest extends TestCase
      */
     public function testValidatePasses()
     {
-        $validator = Chart::validate($this->chartDetails, 'chart');
+        $validator = Chart::validate($this->chartDetails, 'natal');
         $this->assertTrue($validator->passes());
     }
     public function testValidateDefaultPasses()
@@ -23,25 +23,25 @@ class ChartValidationTest extends TestCase
 
     public function testValidateSolarReturnPasses()
     {
-        $validator = Chart::validate($this->chartDetails, 'chart', 'solar');
+        $validator = Chart::validate($this->chartDetails, 'natal', 'solar');
         $this->assertTrue($validator->passes());
     }
 
     public function testValidateProgressedPasses()
     {
-        $validator = Chart::validate($this->chartDetails, 'chart', 'progressed');
+        $validator = Chart::validate($this->chartDetails, 'natal', 'progressed');
         $this->assertTrue($validator->passes());
     }
 
     public function testValidateSynastryPasses()
     {
-        $validator = Chart::validate($this->chartDetails, 'chart', 'synastry');
+        $validator = Chart::validate($this->chartDetails, 'natal', 'synastry');
         $this->assertTrue($validator->passes());
     }
 
     public function testValidateExtraAsArrayPasses()
     {
-        $validator = Chart::validate($this->chartDetails, ['chart', 'progressed']);
+        $validator = Chart::validate($this->chartDetails, ['natal', 'progressed']);
         $this->assertTrue($validator->passes());
     }
 
@@ -73,21 +73,21 @@ class ChartValidationTest extends TestCase
     public function testValidateMissingSolarInputFailure()
     {
         $chartDetails = Arr::except($this->chartDetails, 'solar_return_year');
-        $validator = Chart::validate($chartDetails, 'chart', 'solar');
+        $validator = Chart::validate($chartDetails, 'natal', 'solar');
         $this->assertTrue($validator->fails());
     }
 
     public function testValidateMissingProgressedInputFailure()
     {
         $chartDetails = Arr::except($this->chartDetails, 'progression_date');
-        $validator = Chart::validate($chartDetails, 'chart', 'progressed');
+        $validator = Chart::validate($chartDetails, 'natal', 'progressed');
         $this->assertTrue($validator->fails());
     }
 
     public function testValidateMissingSynastryInputFailure()
     {
         $chartDetails = Arr::except($this->chartDetails, 'synastry_latitude');
-        $validator = Chart::validate($chartDetails, 'chart', 'synastry');
+        $validator = Chart::validate($chartDetails, 'natal', 'synastry');
         $this->assertTrue($validator->fails());
     }
 
@@ -112,7 +112,7 @@ class ChartValidationTest extends TestCase
     public function testHouseSystemCaseInsensitivity()
     {
         $chartDetails = ['house_system' => 'POLICH page'] + $this->chartDetails;
-        $validator = Chart::validate($chartDetails, 'chart');
+        $validator = Chart::validate($chartDetails, 'natal');
         $this->assertTrue($validator->passes());
     }
 }

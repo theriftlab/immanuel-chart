@@ -29,7 +29,7 @@ This will add the natal chart as the primary chart, and the solar return as the 
 * `aspectsToSolarReturn()`, `aspectsToProgressed()`, `aspectsToSynastry()` and `aspectsToTransits()` all specify which of the secondary chart's planets the primary chart's planets will aspect to, and should only be called after the primary chart and relevant secondary chart have been added to the list.
 * `get()` is called at the end of the chain and returns a Laravel collection containing the requested chart data with planets and points and their aspects. You can pass `true` to this method to enforce the resulting chart data collection to still have the `primary` array key even if there is only one chart being returned, otherwise default behaviour for only one chart is to simply return the single requested chart as the main array.
 
-You may validate incoming input against the required birth chart data by using `Chart::validate()`. This accepts an array of inputs and a string describing the type(s) of validation required - either `'chart'` for a standard natal chart, `'solar'` for a solar return chart, `'progressed'` for a progressed chart, `'synastry'` for a synastry chart, or `'optional'` for any of the above optional values (eg. transit date, progression coordinates etc.) It then returns an instance of a standard Laravel `Validator` for you to query.
+You may validate incoming input against the required birth chart data by using `Chart::validate()`. This accepts an array of inputs and a string describing the type(s) of validation required - either `'natal'` for a standard natal chart, `'solar'` for a solar return chart, `'progressed'` for a progressed chart, `'synastry'` for a synastry chart, or `'optional'` for any of the above optional values (eg. transit date, progression coordinates etc.) It then returns an instance of a standard Laravel `Validator` for you to query.
 
 If you require more information on validation, the valid house systems, input field names, and validation types are all defined in the `ChartValidator` class.
 
@@ -49,7 +49,7 @@ $requestInputs = [
     'house_system' => 'Polich Page',
 ];
 
-// Validate - no type passed assumes type "chart"
+// Validate - no type passed assumes type "natal"
 if (Chart::validate($requestInputs)->passes()) {
     $natalChartData = Chart::create($requestInputs)->addNatalChart()->get();
 }
@@ -66,8 +66,8 @@ if (Chart::validate($requestInputs)->passes()) {
 // Add a solar return year
 $requestInputs['solar_return_year'] = '2025';
 
-// Validate all - or we could pass "solar" only since "chart" already validated
-if (Chart::validate($requestInputs, 'chart', 'solar')->passes()) {
+// Validate all - or we could pass "solar" only since "natal" already validated
+if (Chart::validate($requestInputs, 'natal', 'solar')->passes()) {
     $solarChartData = Chart::create($requestInputs)->addSolarReturnChart()->get();
 }
 
@@ -87,7 +87,7 @@ $requestInputs += [
     'synastry_longitude' => '-121.5829968',
 ];
 
-if (Chart::validate($requestInputs, 'chart', 'synastry')->passes()) {
+if (Chart::validate($requestInputs, 'natal', 'synastry')->passes()) {
     $chartData = Chart::create($requestInputs)
         ->addNatalChart()
         ->addSynastryChart()

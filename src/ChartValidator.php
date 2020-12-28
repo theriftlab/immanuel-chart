@@ -44,7 +44,7 @@ class ChartValidator
     public function __construct()
     {
         $this->rules = [
-            'chart' => [
+            'natal' => [
                 'latitude' => ['required', 'numeric'],
                 'longitude' => ['required', 'numeric'],
                 'birth_date' => ['required', 'date_format:Y-m-d'],
@@ -82,7 +82,7 @@ class ChartValidator
      */
     public function validate(array $inputs, ...$ruleTypes) : \Illuminate\Validation\Validator
     {
-        $ruleTypes = !empty($ruleTypes) ? Arr::flatten($ruleTypes) : ['chart'];
+        $ruleTypes = !empty($ruleTypes) ? Arr::flatten($ruleTypes) : ['natal'];
         $rules = Arr::collapse(Arr::only($this->rules, $ruleTypes));
 
         if (!empty($inputs['house_system'])) {
