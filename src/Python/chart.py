@@ -118,15 +118,20 @@ elif aspects == 'transits':
     chart_data = ChartData(primary_chart, transit_chart)
 
 # return requested chart data
-return_data = {
-    'primary': chart_data.data
-}
+return_data = {}
+return_data['primary'] = chart_data.data
+return_data['primary']['chartType'] = chart_type
+return_data['primary']['aspectsTo'] = aspects
 
 if secondary_chart_type in ['solar', 'progressed', 'synastry']:
     return_data['secondary'] = ChartData(secondary_chart).data
+    return_data['secondary']['chartType'] = secondary_chart_type
+    return_data['secondary']['aspectsTo'] = 'secondary'
 
 if with_transits:
     return_data['transits'] = ChartData(transit_chart).data
+    return_data['transits']['chartType'] = 'transits'
+    return_data['transits']['aspectsTo'] = 'transits'
 
 if force_primary_chart_key != 'true' and secondary_chart_type is None and with_transits != 'true':
     return_data = return_data['primary']

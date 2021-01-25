@@ -33,6 +33,8 @@ class ChartData:
             'chartDate': self.format_chart_date(),
             'latitude': self.primary_chart.pos.lat,
             'longitude': self.primary_chart.pos.lon,
+            'chartType': None,
+            'aspectsTo': None,
             'diurnal': self.primary_chart.isDiurnal(),
             'nocturnal': not self.primary_chart.isDiurnal(),
             'moonPhase': self.primary_chart.getMoonPhase(),
