@@ -26,4 +26,12 @@ class TestCase extends \Lumen\Testbench\TestCase
         'transit_date' => '2021-07-01',
         'transit_time' => '13:00',
     ];
+
+    /**
+     * Dirty workaround for abandoned unicorn/lumen-testbench package sucking in breaking version of phpunit.
+     */
+    public function getAnnotations()
+    {
+        return [];
+    }
 }
