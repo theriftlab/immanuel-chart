@@ -2,7 +2,6 @@
 
 namespace RiftLab\ImmanuelChart;
 
-use Illuminate\Support\Facades\Cache;
 use RiftLab\ImmanuelChart\Facades\ChartValidator;
 use Symfony\Component\Process\Process;
 

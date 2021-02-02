@@ -1,6 +1,6 @@
 {
     "name": "theriftlab/immanuel-chart",
-    "description": "Lumen package - bridge to a Python astrology script powered by Flatlib.",
+    "description": "Laravel package providing a PHP bridge to a Python astrology script powered by Riftlib.",
     "type": "library",
     "license": "GPL-2.0-only",
     "authors": [
@@ -23,9 +23,8 @@
         "php": "^7.4"
     },
     "require-dev": {
-        "unicorn/lumen-testbench": "dev-master",
-        "unicorn/lumen-testing": "dev-master",
-        "dms/phpunit-arraysubset-asserts": "^0.2.0"
+        "orchestra/testbench": "^6.11",
+        "dms/phpunit-arraysubset-asserts": "^0.2.1"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
