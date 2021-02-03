@@ -235,7 +235,7 @@ class Chart
         }
 
         // Run script
-        $scriptPath = realpath(__DIR__ . '/Python/chart.py');
+        $scriptPath = realpath(__DIR__.'/Python/chart.py');
         $process = new Process(['python3', $scriptPath, ...$cmdScriptArgs]);
         $process->run();
 

@@ -21,20 +21,20 @@ class ChartValidator
      *
      */
     protected $houseSystems = [
-        'placidus',
+        'alcabitus',
+        'azimuthal',
+        'campanus',
+        'equal 2',
+        'equal',
         'koch',
+        'meridian',
+        'morinus',
+        'placidus',
+        'polich page',
         'porphyrius',
         'regiomontanus',
-        'campanus',
-        'equal',
-        'equal 2',
         'vehlow equal',
         'whole sign',
-        'meridian',
-        'azimuthal',
-        'polich page',
-        'alcabitus',
-        'morinus',
     ];
 
     /**
@@ -80,7 +80,7 @@ class ChartValidator
      * Validate the provided chart details here.
      *
      */
-    public function validate(array $inputs, ...$ruleTypes) : \Illuminate\Validation\Validator
+    public function validate(array $inputs, ...$ruleTypes)
     {
         $ruleTypes = !empty($ruleTypes) ? Arr::flatten($ruleTypes) : ['natal'];
         $rules = Arr::collapse(Arr::only($this->rules, $ruleTypes));
