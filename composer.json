@@ -5,8 +5,8 @@
     "license": "GPL-2.0-only",
     "authors": [
         {
-            "name": "Robert Davies",
-            "email": "robert@theriftlab.com"
+            "name": "The Rift Lab",
+            "email": "scene@theriftlab.com"
         }
     ],
     "autoload": {
