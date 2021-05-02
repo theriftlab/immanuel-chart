@@ -1,6 +1,6 @@
 # Immanuel Chart
 
-Immanuel Chart provides classes and facades for the passing, validating and retrieving of data between a Lumen project and a bundled Python script that uses the [Riftlib library](https://github.com/theriftlab/riftlib/). Currently the Python files are included as standalones in this package's repo.
+Immanuel Chart provides classes and facades for the passing, validating and retrieving of data between a Laravel project and a bundled Python script that uses the [Riftlib library](https://github.com/theriftlab/riftlib/). Currently the Python files are included as standalones in this package's repo.
 
 The Chart class allows data for up to three charts to be returned - _natal_, _solar return_, _progressed_ and _synastry_. You may request up to two of these types, and optionally add transits to make it three. Data will be returned as a standard Laravel collection, either as a single array representing the main chart's data if only one chart is requested, or an array of multiple chart data arrays if multiple charts are requested. In this latter case, the keys will be `primary`, `secondary`, and if requested `transits`. You can also specify which chart's planets the main `primary` chart's aspects apply to. By default this will be its own planets as standard, but you can also request its aspects point to the `secondary` or `transit` chart's planets - useful for synastries and transits.
 
